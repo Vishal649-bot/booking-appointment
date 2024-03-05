@@ -1,0 +1,163 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Submission</title>
+</head>
+<body>
+    <h1>Submit Form</h1>
+    <form id="myForm">
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username"><br>
+        <label for="phonenumber">Phone Number:</label><br>
+        <input type="text" id="phonenumber" name="phonenumber"><br>
+        <label for="email">Email:</label><br>
+        <input type="text" id="email" name="email"><br><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <h1>Submitted Data</h1>
+    <ul id="userData"></ul>
+
+    <script>
+        document.getElementById('myForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            
+            fetch('/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayData(data);
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        function displayData(data) {
+            const userList = document.getElementById('userData');
+            userList.innerHTML = '';
+            data.forEach(user => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `Username: ${user.username}, Phone: ${user.phonenumber}, Email: ${user.email}`;
+                userList.appendChild(listItem);
+            });
+        }
+    </script>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Submission</title>
+</head>
+
+<body>
+    <h1>Submit Form</h1>
+    <form id="myForm">
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username"><br>
+        <label for="email">Email:</label><br>
+        <input type="text" id="email" name="email"><br>
+        <label for="email">phonenumber:</label><br>
+        <input type="text" id="phonenumber" name="email"><br><br>
+        <button type="button" onclick="submitForm()">Submit</button>
+    </form>
+
+    <h1>Submitted Data</h1>
+    <ul id="userData"></ul>
+
+    <script>
+        function submitForm() {
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const phonenumber = document.getElementById('phonenumber').value;
+
+            const data = {
+                username: username,
+                email: email,
+                phonenumber: phonenumber,
+            };
+
+            fetch('/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(dataa => {
+                    console.log(dataa);
+                    // displayData(dataa);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function fetchDataAndDisplay() {
+            fetch('/api/user')
+                .then(response => response.json())
+                .then(data => {
+                    displayData(data);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+      
+
+            function displayData(data) {
+            const userList = document.getElementById('userData');
+            userList.innerHTML = '';
+
+            data.forEach(user => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `Username: ${user.username}, Phone: ${user.phonenumber}, Email: ${user.email}`;
+
+                // Create a delete button
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.addEventListener('click', () => {
+                    // Call the delete function with the user id
+                    console.log(user.id);
+                    deleteUser(user.id);
+                });
+
+                // Append the delete button to the list item
+                listItem.appendChild(deleteButton);
+
+                // Append the list item to the user list
+                userList.appendChild(listItem);
+            });
+        }
+        function deleteUser(userId) {
+            fetch(`/api/user/${userId}`, {
+                method: 'DELETE'
+            })
+            location.reload()
+            // .then(response => {
+            //     console.log(response);
+            //     response.json()
+            // })
+            // // .then(data => {
+            // //     // Once the user is deleted, fetch and display updated data
+            // //     console.log(data);
+            // //     location.reload()
+            // //     fetchDataAndDisplay();
+            // // })
+            // .catch(error => console.error('Error:', error));
+            
+        }
+        fetchDataAndDisplay();
+    </script>
+</body>
+
+</html>
